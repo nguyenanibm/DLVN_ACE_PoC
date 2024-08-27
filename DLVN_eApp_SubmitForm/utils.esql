@@ -1,0 +1,12 @@
+CREATE PROCEDURE Logger 
+(
+IN loggerName CHAR,
+IN logType CHAR,
+IN content CHAR
+) LANGUAGE JAVA EXTERNAL NAME "vn.com.dlvn.utils.logger";
+
+CREATE FUNCTION getUserDefPol 
+(
+IN policyName CHAR,
+IN propName CHAR
+) RETURNS CHAR LANGUAGE JAVA EXTERNAL NAME "vn.com.dlvn.utils.getUserDefPol";
