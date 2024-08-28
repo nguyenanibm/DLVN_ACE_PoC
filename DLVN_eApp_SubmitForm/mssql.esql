@@ -1,7 +1,7 @@
 CREATE PROCEDURE getCustomer (IN potentialID CHAR, IN proposalID CHAR)
 BEGIN
 	DECLARE datasource CHARACTER;
-	SET datasource = getUserDefPol('mssql','datasource');
+	SET datasource = getUserDefPol('datasources','mssql');
 	
 	SET Environment.Variables.DBResults.Customer[] = THE (select PotentialType from Database.{datasource}.dbo.eApp_tbPotentialCustomer where PotentialID = potentialID and ProposalID = proposalID);
 END;
@@ -9,7 +9,7 @@ END;
 CREATE PROCEDURE getCustomerPO (IN proposalID CHAR)
 BEGIN
 	DECLARE datasource CHARACTER;
-	SET datasource = getUserDefPol('mssql','datasource');
+	SET datasource = getUserDefPol('datasources','mssql');
 	
 	SET Environment.Variables.DBResults.CustomerPO[] = THE (SELECT PotentialID, PotentialType, Address, AddressCode FROM Database.{datasource}.dbo.eApp_tbPotentialCustomer WHERE ProposalID = porposalID AND PotentialType = 'PO');
 END;
@@ -17,7 +17,7 @@ END;
 CREATE PROCEDURE getProposalInfo (IN proposalID CHAR)
 BEGIN
 	DECLARE datasource CHARACTER;
-	SET datasource = getUserDefPol('mssql','datasource');
+	SET datasource = getUserDefPol('datasources','mssql');
 	
 	SET Environment.Variables.DBResults.ProposalInfo[] = THE (SELECT ProposalNo,Status FROM Database.{datasource}.dbo.eApp_tbProposal WHERE ProposalID = proposalID);
 END;
@@ -25,7 +25,7 @@ END;
 CREATE PROCEDURE getElseSamePOLI (IN potentialID CHAR, IN proposalID CHAR)
 BEGIN
 	DECLARE datasource CHARACTER;
-	SET datasource = getUserDefPol('mssql','datasource');
+	SET datasource = getUserDefPol('datasources','mssql');
 	
 	SET Environment.Variables.DBResults.CustomerPOLI[] = THE (select PotentialID from Database.{datasource}.dbo.eApp_tbPotentialCustomer 
 where ProposalID = potentialID
@@ -37,7 +37,7 @@ END;
 CREATE PROCEDURE checkIDNumExists (IN idNum CHAR)
 BEGIN
 	DECLARE datasource CHARACTER;
-	SET datasource = getUserDefPol('mssql','datasource');
+	SET datasource = getUserDefPol('datasources','mssql');
 	
 	SET Environment.Variables.DBResults.cli_id = THE (SELECT cli_id FROM Database.{datasource}.dbo.tcli WHERE cli_id_num = idNum);
 END;
@@ -45,7 +45,7 @@ END;
 CREATE PROCEDURE updateCustomerAddress (IN proposalID CHAR)
 BEGIN
 	DECLARE datasource CHARACTER;
-	SET datasource = getUserDefPol('mssql','datasource');
+	SET datasource = getUserDefPol('datasources','mssql');
 	
 	SET Environment.Variables.DBResults.PotentialID[] = THE (SELECT PotentialID FROM Database.{datasource}.dbo.eApp_tbPotentialCustomer WHERE IsPOAddress = 1 AND ProposalID = proposalID);
 	
