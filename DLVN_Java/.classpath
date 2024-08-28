@@ -5,9 +5,9 @@
 	<classpathentry kind="var" path="JCN_HOME/javacompute.jar"/>
 	<classpathentry kind="var" path="COMMON_CLASSES_HOME/IntegrationAPI.jar"/>
 	<classpathentry kind="var" path="JCN_HOME/jplugin2.jar"/>
-	<classpathentry kind="lib" path="/Users/nguyenan/Code/IBM/ACET12/workspace/DLVN_Java/lib/slf4j-api-2.0.16.jar"/>
-	<classpathentry kind="lib" path="/Users/nguyenan/Code/IBM/ACET12/workspace/DLVN_Java/lib/commons-lang3-3.16.0.jar"/>
 	<classpathentry kind="con" path="com.ibm.etools.mft.uri.classpath.MBProjectReference"/>
-	<classpathentry kind="lib" path="/Users/nguyenan/Code/IBM/ACET12/workspace/DLVN_Java/lib/json-20240303.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.16.0.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-2.0.16.jar"/>
+	<classpathentry kind="lib" path="lib/json-20240303.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
