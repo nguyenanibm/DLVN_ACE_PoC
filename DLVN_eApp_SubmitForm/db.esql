@@ -57,7 +57,7 @@ BEGIN
 		UPDATE Database.{datasource}.dbo.eApp_tbPotentialCustomer
 		   SET Address = FIELDVALUE(Environment.Variables.DBResults.CustomerPO[1].Address),
 		   	   AddressCode = FIELDVALUE(Environment.Variables.DBResults.CustomerPO[1].AddressCode)
-		 WHERE PotentialID = Environment.Variables.DBResults.PotentialID[I].PotentialID;
+		 WHERE PotentialID = FIELDVALUE(Environment.Variables.DBResults.PotentialID[I].PotentialID);
 	END WHILE;
 END;
 
