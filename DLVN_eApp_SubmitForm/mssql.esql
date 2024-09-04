@@ -39,7 +39,7 @@ BEGIN
 	DECLARE datasource CHARACTER;
 	SET datasource = getUserDefPol('datasources','mssql');
 	
-	SET Environment.Variables.DBResults.cli_id = THE (SELECT cli_id FROM Database.{datasource}.dbo.tcli WHERE cli_id_num = idNum);
+	SET Environment.Variables.DBResults.CliID[] = THE (SELECT cli_id FROM Database.{datasource}.dbo.tcli WHERE cli_id_num = idNum);
 END;
 
 CREATE PROCEDURE updateCustomerAddress (IN proposalID CHAR)

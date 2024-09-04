@@ -4,9 +4,9 @@ CREATE COMPUTE MODULE CustomLogs_Sort
 		-- CALL CopyMessageHeaders();
 		-- CALL CopyEntireMessage();
 		
-		IF FIELDVALUE(Environment.Variable.Logging.Type) = 'INFO' THEN
+		IF FIELDVALUE(Environment.Variables.Logging.Type) = 'INFO' THEN
 			PROPAGATE TO LABEL 'INFO';
-		ELSEIF FIELDVALUE(Environment.Variable.Logging.Type) = 'ERROR' THEN
+		ELSEIF FIELDVALUE(Environment.Variables.Logging.Type) = 'ERROR' THEN
 			PROPAGATE TO LABEL 'ERROR';
 		ELSE
 			PROPAGATE TO LABEL 'DEBUG';

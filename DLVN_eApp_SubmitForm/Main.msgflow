@@ -6,7 +6,7 @@
     <colorGraphic16 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/DLVN_eApp_SubmitForm/icons/full/obj16/Main.gif"/>
     <colorGraphic32 xmi:type="utility:GIFFileGraphic" resourceName="platform:/plugin/DLVN_eApp_SubmitForm/icons/full/obj30/Main.gif"/>
     <composition>
-      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="71,78" URLSpecifier="/eAppSubmitForm" messageDomainProperty="JSON" faultFormat="JSON" validateMaster="contentAndValue" validateFailureAction="localError">
+      <nodes xmi:type="ComIbmWSInput.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="71,78" URLSpecifier="/eAppSubmitForm" messageDomainProperty="JSON" faultFormat="JSON" validateFailureAction="userTrace">
         <translation xmi:type="utility:ConstantString" string="HTTP Input"/>
       </nodes>
       <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="287,53" computeExpression="esql://routine/#SimpleCompute.Main">

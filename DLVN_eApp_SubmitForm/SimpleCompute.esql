@@ -5,21 +5,21 @@ CREATE COMPUTE MODULE SimpleCompute
 		CALL CopyEntireMessage();
 		
 		-- SAVE REQUEST
-		SET Environment.Variable.Request = OutputRoot;
-		SET Environment.Variable.Logging.Type = 'INFO';
-		SET Environment.Variable.RequestIdentifier = InputLocalEnvironment.Destination.HTTP.RequestIdentifier;
+		SET Environment.Variables.Request = OutputRoot;
+		SET Environment.Variables.Logging.Type = 'INFO';
+		SET Environment.Variables.RequestIdentifier = InputLocalEnvironment.Destination.HTTP.RequestIdentifier;
 		
 		DECLARE url CHAR InputRoot.HTTPInputHeader."X-Original-HTTP-Command";
 		
 		IF(Environment.Variable.Request.JSON.Data.jsonDataInput.Action = 'SubmitCustomerInfo') THEN
-			SET Environment.Variable.RouteName = 'SubmitCustomerInfo';
+			SET Environment.Variables.RouteName = 'SubmitCustomerInfo';
 			PROPAGATE TO LABEL 'SubmitCustomerInfo';
 		ELSE
 			DELETE FIELD OutputRoot.JSON;
 			SET OutputRoot.JSON.Data.Response.Result = 'False';
 			SET OutputRoot.JSON.Data.Response.ErrLog = 'Invalid API action';
 			
-			SET Environment.Variable.RouteName = 'NOPE';
+			SET Environment.Variables.RouteName = 'NOPE';
 			PROPAGATE TO LABEL 'NOPE';
 		END IF;
 		RETURN TRUE;
