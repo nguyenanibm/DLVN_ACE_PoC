@@ -1,4 +1,4 @@
-## Message Flow deduced from Java Compute Node
+## Message Flow deduced from Java Compute Node (Legacy_Codebase)
 ![Code flow](meta/code.jpg "JCN flow")
 
 ## Integration server configuration & deployment
