@@ -8,4 +8,3 @@ USER aceuser
 COPY DLVN_eApp_SubmitForm/BARfile/*.bar /home/aceuser/initial-config/bars/
 COPY docker/odbc.ini /home/aceuser/initial-config/odbcini/
 COPY docker/setdbparms.txt /home/aceuser/initial-config/setdbparms/
-COPY DLVN_eApp_Policies/* /home/aceuser/initial-config/policy/
