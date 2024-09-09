@@ -1,7 +1,7 @@
 ## Message Flow deduced from Java Compute Node
 ![Code flow](meta/code.jpg "JCN flow")
 
-## Integration server configurations
+## Integration server configuration & deployment
 1. Configure your datasource (MSSQL) by editing the `odbc.ini`
 ```
 [DATASOURCE]                                                            <---- Specify your datasource name, this is the name you will specify in setdbparams.txt
