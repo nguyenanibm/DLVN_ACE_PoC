@@ -2,7 +2,8 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
 		-- CALL CopyMessageHeaders();
-		-- CALL CopyEntireMessage();
+		CALL CopyEntireMessage();
+		
 		IF FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialID) = '' THEN
 			SET Environment.Variables.DBData.Action = 'PotentialCustomer';
 		ELSE

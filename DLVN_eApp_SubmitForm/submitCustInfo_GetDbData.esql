@@ -4,7 +4,8 @@ CREATE COMPUTE MODULE submitCustInfo_GetDbData
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
 		-- CALL CopyMessageHeaders();
-		-- CALL CopyEntireMessage();
+		CALL CopyEntireMessage();
+		
 		DECLARE datasource CHARACTER;
 		SET datasource = getUserDefPol('datasources','mssql');
 		
