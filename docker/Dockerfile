@@ -13,7 +13,8 @@ USER root
 # The results of the commands can be found in the /tmp/deploys file.
 #
 COPY DLVN_eApp_SubmitForm/BARfile/*.bar /tmp
-COPY DLVN_eApp_Policies/* /home/aceuser/initial-config/policy/
+COPY DefaultPolicies/* /home/aceuser/initial-config/policy/
+COPY DLVN_eApp_Policies/*.policyxml /home/aceuser/initial-config/policy/
 COPY docker/odbc.ini /home/aceuser/initial-config/odbcini/
 COPY docker/setdbparms.txt /home/aceuser/initial-config/setdbparms/
 
