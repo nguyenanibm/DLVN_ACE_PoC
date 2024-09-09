@@ -3,7 +3,6 @@
 	<name>DLVN_eApp_SubmitForm</name>
 	<comment></comment>
 	<projects>
-		<project>DefaultPolicies</project>
 		<project>DLVN_eApp_Policies</project>
 		<project>DLVN_Java</project>
 	</projects>
