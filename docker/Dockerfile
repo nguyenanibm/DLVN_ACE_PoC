@@ -13,6 +13,8 @@ USER root
 # The results of the commands can be found in the /tmp/deploys file.
 #
 COPY BARfiles/*.bar /tmp
+COPY docker/odbc.ini /home/aceuser/initial-config/odbcini/
+COPY docker/setdbparms.txt /home/aceuser/initial-config/setdbparms/
 RUN export LICENSE=accept \
     && . /opt/ibm/ace-12/server/bin/mqsiprofile \
     && set -x && for FILE in /tmp/*.bar; do \
