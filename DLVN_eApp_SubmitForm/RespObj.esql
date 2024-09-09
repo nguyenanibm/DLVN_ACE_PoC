@@ -2,7 +2,7 @@ CREATE COMPUTE MODULE RespObj
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
 		-- CALL CopyMessageHeaders();
-		-- CALL CopyEntireMessage();
+		CALL CopyEntireMessage();
 		SET OutputRoot.Properties.*[] = Environment.Variables.Request.Properties.*[];
 		CREATE NEXTSIBLING OF OutputRoot.Properties DOMAIN('HTTPReplyHeader');
 		SET OutputRoot.HTTPReplyHeader."Content-Type" = 'application/json';
