@@ -1,1 +1,1 @@
-odbc::DATASOURCE USERNAME password
+odbc::EAPP dlvnpoc P@ssw0rd
