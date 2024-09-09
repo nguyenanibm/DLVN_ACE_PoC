@@ -12,6 +12,9 @@
 *.db-wal
 
 ### Java ###
+# IDE settings
+.settings/
+bin/
 # Compiled class file
 *.class
 
