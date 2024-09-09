@@ -26,3 +26,5 @@ odbc::DATASOURCE USERNAME password
                            your db
                            password
 ```
+3. Build your image using the file `docker/Dockerfile`
+4. Deploy your application to OpenShift Cluster
