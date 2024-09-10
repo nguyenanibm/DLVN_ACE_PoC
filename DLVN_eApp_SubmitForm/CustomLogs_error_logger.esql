@@ -4,17 +4,17 @@ CREATE COMPUTE MODULE CustomLogs_error_logger
 	CREATE FUNCTION Main() RETURNS BOOLEAN
 	BEGIN
 		-- CALL CopyMessageHeaders();
-		-- CALL CopyEntireMessage();
+		CALL CopyEntireMessage();
 		DECLARE loggerName CHARACTER;
 --		DECLARE start REFERENCE TO InputExceptionList.*[1];
 
 		SET loggerName = ApplicationLabel || '.' ||MessageFlowLabel || '.' || NodeLabel;
 --		WHILE start.Number IS NOT NULL DO
 --			MOVE start LASTCHILD;
---			CALL VBLOG( loggerName, 'ERROR' , start.Text);
+--			CALL Logger( loggerName, 'ERROR' , start.Text);
 --		END WHILE;
 --
---		CALL VBLOG( loggerName, 'ERROR' , '===============================>>>');
+--		CALL Logger( loggerName, 'ERROR' , '===============================>>>');
 
 		Create LASTCHILD of OutputRoot DOMAIN('XML') Name 'XML';
 		SET OutputRoot.XML.ExceptionList = InputExceptionList;
