@@ -78,7 +78,7 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 --		CALL getProposalInfo(FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID));
 		SET Environment.Variables.DBResults.ProposalInfo[] = 
 			(SELECT T.ProposalNo, T.Status FROM Database.{datasource}.dbo.eApp_tbProposal AS T
-			  WHERE T.ProposalID = proposalID);
+			  WHERE T.ProposalID = FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID));
 
 		IF FIELDVALUE(Environment.Variables.DBResults.ProposalInfo[1].Status) = 'Initial' THEN
 			SET Environment.Variables.Request.JSON.Data.Result = 'false';
@@ -162,7 +162,7 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 			  where T.ProposalID = FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID)
 			    and T.PotentialID <> FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialID)
 			    and T.IsPOSameLI = 1
-			    and TPotentialType in ('PO', 'LI'));
+			    and T.PotentialType in ('PO', 'LI'));
 		
 		IF FIELDVALUE(Environment.Variables.DBResults.CustomerPOLI[1].PotentialID) <> ''
 			AND FIELDVALUE(Environment.Variables.DBResults.Customer[1].PotentialType) IN ('LI','PO') THEN
@@ -234,4 +234,57 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 	CREATE PROCEDURE CopyEntireMessage() BEGIN
 		SET OutputRoot = InputRoot;
 	END;
+	
+	CREATE PROCEDURE eApp_spSaveAppForm (
+		IN p1 CHAR, 
+		IN p2 CHAR, 
+		IN p3 CHAR,
+		IN p4 CHAR,
+		IN p5 CHAR,
+		IN p6 CHAR,
+		IN p7 CHAR,
+		IN p8 CHAR,
+		IN p9 CHAR,
+		IN p10 CHAR,
+		IN p11 CHAR, 
+		IN p12 CHAR, 
+		IN p13 CHAR,
+		IN p14 CHAR,
+		IN p15 CHAR,
+		IN p16 CHAR,
+		IN p17 INT,
+		IN p18 CHAR,
+		IN p19 CHAR,
+		IN p20 CHAR,
+		IN p21 CHAR, 
+		IN p22 CHAR, 
+		IN p23 CHAR,
+		IN p24 CHAR,
+		IN p25 CHAR,
+		IN p26 INT,
+		IN p27 CHAR,
+		IN p28 CHAR,
+		IN p29 CHAR,
+		IN p30 CHAR,
+		IN p31 INT, 
+		IN p32 CHAR, 
+		IN p33 CHAR,
+		IN p34 CHAR,
+		IN p35 INT,
+		IN p36 INT,
+		IN p37 CHAR,
+		IN p38 CHAR,
+		IN p39 CHAR,
+		IN p40 CHAR,
+		IN p41 INT, 
+		IN p42 INT, 
+		IN p43 INT,
+		IN p44 CHAR,
+		IN p45 INT,
+		IN p46 INT,
+		IN p47 CHAR,
+		OUT p48 INT
+	)
+	LANGUAGE DATABASE
+	EXTERNAL NAME "dbo.eApp_spSaveAppForm";
 END MODULE;
