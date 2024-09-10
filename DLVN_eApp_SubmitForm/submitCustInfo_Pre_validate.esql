@@ -65,12 +65,12 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		
 		IF FIELDVALUE(Environment.Variables.Request.JSON.Data.Project) = '' THEN
 			SET Environment.Variables.Request.JSON.Data.Project = 'magp';
-			SET OutputRoot.JSON.Data.Project = 'magp';
+--			SET OutputRoot.JSON.Data.Response.Project = 'magp';
 		END IF;
 		
 		IF FIELDVALUE(Environment.Variables.Request.JSON.Data.FullName) = '' THEN
-			SET Environment.Variables.Request.JSON.Data.Result = 'false';
-			SET Environment.Variables.Request.JSON.Data.errLog = 'EMPTY';
+			SET OutputRoot.JSON.Data.Response.Result = 'false';
+			SET OutputRoot.JSON.Data.Response.ErrLog = 'EMPTY';
 			SET Environment.Variables.RouteName = 'RETURN';
 			PROPAGATE TO LABEL 'RETURN';
 		END IF;
@@ -81,8 +81,8 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 			  WHERE T.ProposalID = FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID));
 
 		IF FIELDVALUE(Environment.Variables.DBResults.ProposalInfo[1].Status) = 'Initial' THEN
-			SET Environment.Variables.Request.JSON.Data.Result = 'false';
-			SET Environment.Variables.Request.JSON.Data.errLog = 'EMPTY';
+			SET OutputRoot.JSON.Data.Response.Result = 'false';
+			SET OutputRoot.JSON.Data.Response.ErrLog = 'EMPTY';
 			SET Environment.Variables.RouteName = 'RETURN';
 			PROPAGATE TO LABEL 'RETURN';
 		END IF;
@@ -144,8 +144,8 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		);
 		
 		IF FIELDVALUE(Environment.Variables.DBResults.PotentialID) < 0 THEN
-			SET Environment.Variables.Request.JSON.Data.Result = 'false';
-			SET Environment.Variables.Request.JSON.Data.errLog = 'Customer not saved successful';
+			SET OutputRoot.JSON.Data.Response.Result = 'false';
+			SET OutputRoot.JSON.Data.Response.ErrLog = 'Customer not saved successful';
 			SET Environment.Variables.RouteName = 'RETURN';
 			PROPAGATE TO LABEL 'RETURN';
 		END IF;
@@ -217,6 +217,9 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 				Environment.Variables.DBResults.PotentialID
 			);
 		END IF;
+		
+		SET OutputRoot.JSON.Data.Response.Result = 'true';
+		SET OutputRoot.JSON.Data.Response.ErrLog = 'Submit Customer is saved successfull.';
 		
 		RETURN TRUE;
 	END;
