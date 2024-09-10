@@ -11,7 +11,7 @@ CREATE COMPUTE MODULE SimpleCompute
 		
 		DECLARE url CHAR InputRoot.HTTPInputHeader."X-Original-HTTP-Command";
 		
-		IF(Environment.Variable.Request.JSON.Data.jsonDataInput.Action = 'SubmitCustomerInfo') THEN
+		IF(FIELDVALUE(Environment.Variable.Request.JSON.Data.jsonDataInput.Action) = 'SubmitCustomerInfo') THEN
 			SET Environment.Variables.RouteName = 'SubmitCustomerInfo';
 			PROPAGATE TO LABEL 'SubmitCustomerInfo';
 		ELSE
