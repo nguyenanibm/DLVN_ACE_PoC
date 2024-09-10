@@ -5,13 +5,13 @@ CREATE COMPUTE MODULE SimpleCompute
 		CALL CopyEntireMessage();
 		
 		-- SAVE REQUEST
-		SET Environment.Variables.Request = OutputRoot;
+		SET Environment.Variables.Request = InputRoot;
 		SET Environment.Variables.Logging.Type = 'INFO';
 		SET Environment.Variables.RequestIdentifier = InputLocalEnvironment.Destination.HTTP.RequestIdentifier;
 		
 		DECLARE url CHAR InputRoot.HTTPInputHeader."X-Original-HTTP-Command";
 		
-		IF(FIELDVALUE(Environment.Variable.Request.JSON.Data.jsonDataInput.Action) = 'SubmitCustomerInfo') THEN
+		IF(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.Action) = 'SubmitCustomerInfo') THEN
 			SET Environment.Variables.RouteName = 'SubmitCustomerInfo';
 			PROPAGATE TO LABEL 'SubmitCustomerInfo';
 		ELSE
