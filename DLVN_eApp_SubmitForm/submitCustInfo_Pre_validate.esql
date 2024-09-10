@@ -4,6 +4,9 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		-- CALL CopyMessageHeaders();
 		CALL CopyEntireMessage();
 		
+		DECLARE datasource CHARACTER;
+		SET datasource = getUserDefPol('datasources','mssql');
+		
 		IF FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialID) = '' THEN
 			SET Environment.Variables.DBData.Action = 'PotentialCustomer';
 		ELSE
@@ -52,9 +55,13 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 			SET Environment.Variables.DBData.IsLIS = FIELDVALUE(Environment.Variables.Request.JSON.Data.IsLIS);
 		END IF;
 		
---		IF (FIELDVALUE(Environment.Variables.Request.JSON.Data.isPOAddress) = 'true') AND (FIELDVALUE(Environment.Variables.Request.JSON.Data.isPOAddress) = '1') THEN
+		IF (FIELDVALUE(Environment.Variables.Request.JSON.Data.isPOAddress) = 'true') AND (FIELDVALUE(Environment.Variables.Request.JSON.Data.isPOAddress) = '1') THEN
 --			CALL getCustomerPO(FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID));
---		END IF;
+			SET Environment.Variables.DBResults.CustomerPO[] = 
+				(SELECT T.PotentialID, T.PotentialType, T.Address, T.AddressCode FROM Database.{datasource}.dbo.eApp_tbPotentialCustomer AS T
+				  WHERE T.ProposalID = FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID) 
+				    AND T.PotentialType = 'PO');
+		END IF;
 		
 		IF FIELDVALUE(Environment.Variables.Request.JSON.Data.Project) = '' THEN
 			SET Environment.Variables.Request.JSON.Data.Project = 'magp';
@@ -69,6 +76,10 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		END IF;
 		
 --		CALL getProposalInfo(FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID));
+		SET Environment.Variables.DBResults.ProposalInfo[] = 
+			(SELECT T.ProposalNo, T.Status FROM Database.{datasource}.dbo.eApp_tbProposal AS T
+			  WHERE T.ProposalID = proposalID);
+
 		IF FIELDVALUE(Environment.Variables.DBResults.ProposalInfo[1].Status) = 'Initial' THEN
 			SET Environment.Variables.Request.JSON.Data.Result = 'false';
 			SET Environment.Variables.Request.JSON.Data.errLog = 'EMPTY';
@@ -77,122 +88,135 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		END IF;
 		
 --		CALL checkIDNumExists(FIELDVALUE(Environment.Variables.Request.JSON.Data.IDNum));
+		SET Environment.Variables.DBResults.CliID[] = 
+			(SELECT T.cli_id FROM Database.{datasource}.dbo.tcli AS T
+			  WHERE T.cli_id_num = FIELDVALUE(Environment.Variables.Request.JSON.Data.IDNum));
 		
---		CALL eApp_spSaveAppForm(
---			FIELDVALUE(Environment.Variables.DBData.Action),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialType),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.Relationship),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.FullName),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.BirthDay),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.BirthPlace),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.Age),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.Gender),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.IDNum),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.Nationality),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.Maturity),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.Occupation),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.OccupationDetail),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOcc),
---			FIELDVALUE(Environment.Variables.DBData.Income),
---			FIELDVALUE(Environment.Variables.DBData.IsTaxAmerican),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.CellPhone),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.HomePhone),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.BusinessPhone),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.Email),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.Address),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.AddressCode),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.BusinessAddress),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.BusinessAddressCode),
---			FIELDVALUE(Environment.Variables.DBData.IsCompany),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.BankAccount),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.BankBranch),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOccDetail),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.TaxID),
---			0,
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.ClassSchool),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.School),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherIncome),
---			FIELDVALUE(Environment.Variables.DBData.IsPOAddress),
---			FIELDVALUE(Environment.Variables.DBData.IsOtherAddress),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.IsSMS),
---			FIELDVALUE(Environment.Variables.DBResults.cli_id),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.OccupationCode),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOccCode),
---			0,
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialID),
---			FIELDVALUE(Environment.Variables.DBData.IsLIS),
---			'',
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.OccupationClassCurrent),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOccupationClass),
---			FIELDVALUE(Environment.Variables.Request.JSON.Data.PositionFreeText),
---			Environment.Variables.DBResults.PotentialID
---		);
+		CALL eApp_spSaveAppForm(
+			FIELDVALUE(Environment.Variables.DBData.Action),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialType),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.Relationship),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.FullName),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.BirthDay),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.BirthPlace),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.Age),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.Gender),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.IDNum),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.Nationality),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.Maturity),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.Occupation),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.OccupationDetail),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOcc),
+			FIELDVALUE(Environment.Variables.DBData.Income),
+			FIELDVALUE(Environment.Variables.DBData.IsTaxAmerican),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.CellPhone),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.HomePhone),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.BusinessPhone),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.Email),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.Address),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.AddressCode),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.BusinessAddress),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.BusinessAddressCode),
+			FIELDVALUE(Environment.Variables.DBData.IsCompany),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.BankAccount),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.BankBranch),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOccDetail),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.TaxID),
+			0,
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.ClassSchool),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.School),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherIncome),
+			FIELDVALUE(Environment.Variables.DBData.IsPOAddress),
+			FIELDVALUE(Environment.Variables.DBData.IsOtherAddress),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.IsSMS),
+			FIELDVALUE(Environment.Variables.DBResults.cli_id),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.OccupationCode),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOccCode),
+			0,
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialID),
+			FIELDVALUE(Environment.Variables.DBData.IsLIS),
+			'',
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.OccupationClassCurrent),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOccupationClass),
+			FIELDVALUE(Environment.Variables.Request.JSON.Data.PositionFreeText),
+			Environment.Variables.DBResults.PotentialID
+		);
 		
---		IF FIELDVALUE(Environment.Variables.DBResults.PotentialID) < 0 THEN
---			SET Environment.Variables.Request.JSON.Data.Result = 'false';
---			SET Environment.Variables.Request.JSON.Data.errLog = 'Customer not saved successful';
---			SET Environment.Variables.RouteName = 'RETURN';
---			PROPAGATE TO LABEL 'RETURN';
---		END IF;
+		IF FIELDVALUE(Environment.Variables.DBResults.PotentialID) < 0 THEN
+			SET Environment.Variables.Request.JSON.Data.Result = 'false';
+			SET Environment.Variables.Request.JSON.Data.errLog = 'Customer not saved successful';
+			SET Environment.Variables.RouteName = 'RETURN';
+			PROPAGATE TO LABEL 'RETURN';
+		END IF;
 		
 --		CALL getCustomer(FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID), FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialID));
+		SET Environment.Variables.DBResults.Customer[] = 
+			(select T.PotentialType from Database.{datasource}.dbo.eApp_tbPotentialCustomer AS T
+			  where T.PotentialID = FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID)
+			    and T.ProposalID = FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialID));
 		
 --		CALL getElseSamePOLI(FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID), FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialID));
+		SET Environment.Variables.DBResults.CustomerPOLI[] = 
+			(select T.PotentialID from Database.{datasource}.dbo.eApp_tbPotentialCustomer AS T
+			  where T.ProposalID = FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID)
+			    and T.PotentialID <> FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialID)
+			    and T.IsPOSameLI = 1
+			    and TPotentialType in ('PO', 'LI'));
 		
---		IF FIELDVALUE(Environment.Variables.DBResults.CustomerPOLI[1].PotentialID) <> ''
---			AND FIELDVALUE(Environment.Variables.DBResults.Customer[1].PotentialType) IN ('LI','PO') THEN
---			CALL eApp_spSaveAppForm(
---				FIELDVALUE(Environment.Variables.DBData.Action),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialType),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.Relationship),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.FullName),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.BirthDay),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.BirthPlace),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.Age),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.Gender),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.IDNum),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.Nationality),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.Maturity),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.Occupation),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.OccupationDetail),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOcc),
---				FIELDVALUE(Environment.Variables.DBData.Income),
---				FIELDVALUE(Environment.Variables.DBData.IsTaxAmerican),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.CellPhone),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.HomePhone),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.BusinessPhone),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.Email),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.Address),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.AddressCode),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.BusinessAddress),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.BusinessAddressCode),
---				FIELDVALUE(Environment.Variables.DBData.IsCompany),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.BankAccount),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.BankBranch),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOccDetail),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.TaxID),
---				0,
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.ClassSchool),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.School),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherIncome),
---				FIELDVALUE(Environment.Variables.DBData.IsPOAddress),
---				FIELDVALUE(Environment.Variables.DBData.IsOtherAddress),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.IsSMS),
---				FIELDVALUE(Environment.Variables.DBResults.CliID),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.OccupationCode),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOccCode),
---				0,
---				FIELDVALUE(Environment.Variables.DBResults.CustomerPOLI[1].PotentialID),
---				FIELDVALUE(Environment.Variables.DBData.IsLIS),
---				'',
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.OccupationClassCurrent),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOccupationClass),
---				FIELDVALUE(Environment.Variables.Request.JSON.Data.PositionFreeText),
---				Environment.Variables.DBResults.PotentialID
---			);
---		END IF;
+		IF FIELDVALUE(Environment.Variables.DBResults.CustomerPOLI[1].PotentialID) <> ''
+			AND FIELDVALUE(Environment.Variables.DBResults.Customer[1].PotentialType) IN ('LI','PO') THEN
+			CALL eApp_spSaveAppForm(
+				FIELDVALUE(Environment.Variables.DBData.Action),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialType),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.Relationship),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.FullName),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.BirthDay),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.BirthPlace),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.Age),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.Gender),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.IDNum),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.Nationality),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.Maturity),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.Occupation),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.OccupationDetail),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOcc),
+				FIELDVALUE(Environment.Variables.DBData.Income),
+				FIELDVALUE(Environment.Variables.DBData.IsTaxAmerican),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.CellPhone),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.HomePhone),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.BusinessPhone),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.Email),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.Address),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.AddressCode),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.BusinessAddress),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.BusinessAddressCode),
+				FIELDVALUE(Environment.Variables.DBData.IsCompany),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.BankAccount),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.BankBranch),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOccDetail),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.TaxID),
+				0,
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.ClassSchool),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.School),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherIncome),
+				FIELDVALUE(Environment.Variables.DBData.IsPOAddress),
+				FIELDVALUE(Environment.Variables.DBData.IsOtherAddress),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.IsSMS),
+				FIELDVALUE(Environment.Variables.DBResults.CliID),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.OccupationCode),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOccCode),
+				0,
+				FIELDVALUE(Environment.Variables.DBResults.CustomerPOLI[1].PotentialID),
+				FIELDVALUE(Environment.Variables.DBData.IsLIS),
+				'',
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.OccupationClassCurrent),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.OtherOccupationClass),
+				FIELDVALUE(Environment.Variables.Request.JSON.Data.PositionFreeText),
+				Environment.Variables.DBResults.PotentialID
+			);
+		END IF;
 		
 		RETURN TRUE;
 	END;
