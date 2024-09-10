@@ -24,7 +24,7 @@
       <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_7" location="486,102" computeExpression="esql://routine/#CustomLogs_error_logger.Main">
         <translation xmi:type="utility:ConstantString" string="error_logger"/>
       </nodes>
-      <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="223,211" labelName="DEBUG">
+      <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="222,238" labelName="DEBUG">
         <translation xmi:type="utility:ConstantString" string="DEBUG"/>
       </nodes>
       <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output" location="810,142">
