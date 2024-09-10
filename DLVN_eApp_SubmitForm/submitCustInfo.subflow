@@ -12,7 +12,7 @@
       <nodes xmi:type="eflow:FCMSink" xmi:id="OutTerminal.Output" location="799,225">
         <translation xmi:type="utility:TranslatableString" key="OutTerminal.Output" bundleName="submitCustInfo" pluginId="DLVN_eApp_SubmitForm"/>
       </nodes>
-      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="192,123" computeExpression="esql://routine/#submitCustInfo_Pre_validate.Main" computeMode="destinationAndMessage">
+      <nodes xmi:type="ComIbmCompute.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_2" location="192,123" dataSource="EAPP" connectDatasourceBeforeFlowStarts="true" computeExpression="esql://routine/#submitCustInfo_Pre_validate.Main" computeMode="destinationAndMessage">
         <translation xmi:type="utility:ConstantString" string="Pre-validate"/>
       </nodes>
       <nodes xmi:type="ComIbmLabel.msgnode:FCMComposite_1" xmi:id="FCMComposite_1_1" location="209,307" labelName="RETURN">

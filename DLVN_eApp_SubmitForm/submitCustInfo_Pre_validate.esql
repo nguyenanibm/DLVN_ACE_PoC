@@ -5,7 +5,7 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		CALL CopyEntireMessage();
 		
 		DECLARE datasource CHARACTER;
-		SET datasource = getUserDefPol('datasources','mssql');
+--		SET datasource = getUserDefPol('datasources','mssql');
 		
 		IF FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialID) = '' THEN
 			SET Environment.Variables.DBData.Action = 'PotentialCustomer';
@@ -58,7 +58,7 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		IF (FIELDVALUE(Environment.Variables.Request.JSON.Data.isPOAddress) = 'true') AND (FIELDVALUE(Environment.Variables.Request.JSON.Data.isPOAddress) = '1') THEN
 --			CALL getCustomerPO(FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID));
 			SET Environment.Variables.DBResults.CustomerPO[] = 
-				(SELECT T.PotentialID, T.PotentialType, T.Address, T.AddressCode FROM Database.{datasource}.dbo.eApp_tbPotentialCustomer AS T
+				(SELECT T.PotentialID, T.PotentialType, T.Address, T.AddressCode FROM Database.eApp_tbPotentialCustomer AS T
 				  WHERE T.ProposalID = FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID) 
 				    AND T.PotentialType = 'PO');
 		END IF;
@@ -77,7 +77,7 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		
 --		CALL getProposalInfo(FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID));
 		SET Environment.Variables.DBResults.ProposalInfo[] = 
-			(SELECT T.ProposalNo, T.Status FROM Database.{datasource}.dbo.eApp_tbProposal AS T
+			(SELECT T.ProposalNo, T.Status FROM Database.eApp_tbProposal AS T
 			  WHERE T.ProposalID = FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID));
 
 		IF FIELDVALUE(Environment.Variables.DBResults.ProposalInfo[1].Status) = 'Initial' THEN
@@ -89,7 +89,7 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		
 --		CALL checkIDNumExists(FIELDVALUE(Environment.Variables.Request.JSON.Data.IDNum));
 		SET Environment.Variables.DBResults.CliID[] = 
-			(SELECT T.cli_id FROM Database.{datasource}.dbo.tcli AS T
+			(SELECT T.cli_id FROM Database.dbo.tcli AS T
 			  WHERE T.cli_id_num = FIELDVALUE(Environment.Variables.Request.JSON.Data.IDNum));
 		
 		CALL eApp_spSaveAppForm(
@@ -152,13 +152,13 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		
 --		CALL getCustomer(FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID), FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialID));
 		SET Environment.Variables.DBResults.Customer[] = 
-			(select T.PotentialType from Database.{datasource}.dbo.eApp_tbPotentialCustomer AS T
+			(select T.PotentialType from Database.eApp_tbPotentialCustomer AS T
 			  where T.PotentialID = FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID)
 			    and T.ProposalID = FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialID));
 		
 --		CALL getElseSamePOLI(FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID), FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialID));
 		SET Environment.Variables.DBResults.CustomerPOLI[] = 
-			(select T.PotentialID from Database.{datasource}.dbo.eApp_tbPotentialCustomer AS T
+			(select T.PotentialID from Database.eApp_tbPotentialCustomer AS T
 			  where T.ProposalID = FIELDVALUE(Environment.Variables.Request.JSON.Data.ProposalID)
 			    and T.PotentialID <> FIELDVALUE(Environment.Variables.Request.JSON.Data.PotentialID)
 			    and T.IsPOSameLI = 1
