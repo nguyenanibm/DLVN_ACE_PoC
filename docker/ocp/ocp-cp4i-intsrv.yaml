@@ -1,0 +1,48 @@
+apiVersion: appconnect.ibm.com/v1beta1
+kind: IntegrationServer
+metadata:
+  name: submitform
+  labels:
+    app: submitform
+  namespace: ace-poc
+spec:
+  license:
+    accept: true
+    license: L-QECF-MBXVLU
+    use: CloudPakForIntegrationNonProductionFREE
+  pod:
+    imagePulSecrets:
+      - name: dlvn-secret
+    containers:
+      runtime:
+        imagePullPolicy: IfNotPresent
+        image: image/registry/repo/ace-submitform:v0.1
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1Gi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+  env:
+    - name: TZ
+      value: Asia/Ho_Chi_Minh
+    - name: SERVER_NAME
+      value: DLVN-PoC-ACE
+    - name: MQSI_FILENODES_ROOT_DIRECTORY
+      value: /home/aceuser
+    - name: LANG
+      value: en_US.utf-8
+    - name: LC_ALL
+      value: en_US.utf-8
+  router:
+    timeout: 120s
+  disableRoutes: false
+  service:
+    endpointType: http
+  adminServerSecure: true
+  createDashboardUsers: false
+  designerFlowsOperationMode: disabled
+  enableMetrics: true
+  replicas: 1
+  version: '12.0'
