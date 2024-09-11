@@ -1,2 +1,2 @@
-odbc::EAPP1 dlvnpoc P@ssw0rd
-odbc::EAPP2 dlvnpoc P@ssw0rd
+odbc::EAPPSQL1 dlvnpoc P@ssw0rd
+odbc::EAPPSQL2 dlvnpoc P@ssw0rd

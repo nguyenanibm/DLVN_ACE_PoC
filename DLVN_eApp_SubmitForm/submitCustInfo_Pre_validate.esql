@@ -89,7 +89,7 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		
 --		CALL checkIDNumExists(FIELDVALUE(Environment.Variables.Request.JSON.Data.IDNum));
 		SET Environment.Variables.DBResults.CliID[] = 
-			(SELECT T.cli_id FROM Database.dbo.tcli AS T
+			(SELECT T.cli_id FROM Database.tcli AS T
 			  WHERE T.cli_id_num = FIELDVALUE(Environment.Variables.Request.JSON.Data.IDNum));
 		
 		CALL eApp_spSaveAppForm(

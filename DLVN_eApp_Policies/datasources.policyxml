@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <policies>
   <policy policyType="UserDefined" policyName="datasources" policyTemplate="UserDefined">
-    <mssql>EAPP</mssql>
+    <mssql>EAPP1</mssql>
+    <db2>EAPP2</db2>
   </policy>
 </policies>
