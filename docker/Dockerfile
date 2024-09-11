@@ -7,4 +7,5 @@ RUN microdnf update
 USER aceuser
 COPY DLVN_eApp_SubmitForm/BARfile/*.bar /home/aceuser/initial-config/bars/
 COPY docker/odbc.ini /home/aceuser/initial-config/odbcini/
+COPY docker/db2cli.ini /home/aceuser/initial-config/odbcini/
 COPY docker/setdbparms.txt /home/aceuser/initial-config/setdbparms/
