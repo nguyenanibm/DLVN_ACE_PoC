@@ -1,8 +1,8 @@
 ARG  FROMIMAGE=icr.io/appc-dev/ace-server:12.0.4.0-r2-20220520-125302
 FROM ${FROMIMAGE}
 
-USER root
-RUN microdnf update
+# USER root
+# RUN microdnf update
 
 USER aceuser
 COPY DLVN_eApp_SubmitForm/BARfile/*.bar /home/aceuser/initial-config/bars/
