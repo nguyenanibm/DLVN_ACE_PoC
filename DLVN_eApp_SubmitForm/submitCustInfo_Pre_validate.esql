@@ -61,6 +61,12 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 				(SELECT T.PotentialID, T.PotentialType, T.Address, T.AddressCode FROM Database.EAPPSQL1.dbo.eApp_tbPotentialCustomer AS T
 				  WHERE T.ProposalID = FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.ProposalID) 
 				    AND T.PotentialType = 'PO');
+			
+			SET Environment.Variables.DBState.SQLAction = 'dbo.eApp_tbPotentialCustomer';
+			SET Environment.Variables.DBState.SQLState1 = SQLSTATE;
+			SET Environment.Variables.DBState.SQLCode1 = SQLCODE;
+			SET Environment.Variables.DBState.SQLErrorText1 = SQLERRORTEXT;
+			SET Environment.Variables.DBState.SQLNativeError1 = SQLNATIVEERROR;
 		END IF;
 		
 		IF FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.Project) = '' THEN
@@ -91,6 +97,12 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		SET Environment.Variables.DBResults.CliID[] = 
 			(SELECT T.cli_id FROM Database.EAPPSQL2.dbo.tcli AS T
 			  WHERE T.cli_id_num = FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.IDNum));
+		
+		SET Environment.Variables.DBState.SQLAction = 'dbo.tcli';
+		SET Environment.Variables.DBState.SQLState1 = SQLSTATE;
+		SET Environment.Variables.DBState.SQLCode1 = SQLCODE;
+		SET Environment.Variables.DBState.SQLErrorText1 = SQLERRORTEXT;
+		SET Environment.Variables.DBState.SQLNativeError1 = SQLNATIVEERROR;
 
 		CALL eApp_spSaveAppForm(
 			FIELDVALUE(Environment.Variables.DBData.Action),
@@ -141,7 +153,13 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 			CAST(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OtherOccupationClass) AS INTEGER),
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.PositionFreeText),
 			Environment.Variables.DBResults.PotentialID
-		);
+		) IN Database.EAPPSQL1;
+		
+		SET Environment.Variables.DBState.SQLAction = 'dbo.eApp_spSaveAppForm_1';
+		SET Environment.Variables.DBState.SQLState1 = SQLSTATE;
+		SET Environment.Variables.DBState.SQLCode1 = SQLCODE;
+		SET Environment.Variables.DBState.SQLErrorText1 = SQLERRORTEXT;
+		SET Environment.Variables.DBState.SQLNativeError1 = SQLNATIVEERROR;
 		
 		IF FIELDVALUE(Environment.Variables.DBResults.PotentialID) < 0 THEN
 			SET OutputRoot.JSON.Data.Response.Result = 'false';
@@ -156,6 +174,12 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 			  where T.PotentialID = FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.ProposalID)
 			    and T.ProposalID = FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.PotentialID));
 		
+		SET Environment.Variables.DBState.SQLAction = 'dbo.eApp_tbPotentialCustomer';
+		SET Environment.Variables.DBState.SQLState1 = SQLSTATE;
+		SET Environment.Variables.DBState.SQLCode1 = SQLCODE;
+		SET Environment.Variables.DBState.SQLErrorText1 = SQLERRORTEXT;
+		SET Environment.Variables.DBState.SQLNativeError1 = SQLNATIVEERROR;
+		
 --		CALL getElseSamePOLI(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.ProposalID), FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.PotentialID));
 		SET Environment.Variables.DBResults.CustomerPOLI[] = 
 			(select T.PotentialID from Database.EAPPSQL1.dbo.eApp_tbPotentialCustomer AS T
@@ -163,6 +187,12 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 			    and T.PotentialID <> FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.PotentialID)
 			    and T.IsPOSameLI = 1
 			    and T.PotentialType in ('PO', 'LI'));
+		
+		SET Environment.Variables.DBState.SQLAction = 'dbo.eApp_tbPotentialCustomer';
+		SET Environment.Variables.DBState.SQLState1 = SQLSTATE;
+		SET Environment.Variables.DBState.SQLCode1 = SQLCODE;
+		SET Environment.Variables.DBState.SQLErrorText1 = SQLERRORTEXT;
+		SET Environment.Variables.DBState.SQLNativeError1 = SQLNATIVEERROR;
 		
 		IF FIELDVALUE(Environment.Variables.DBResults.CustomerPOLI[1].PotentialID) <> ''
 			AND FIELDVALUE(Environment.Variables.DBResults.Customer[1].PotentialType) IN ('LI','PO') THEN
@@ -215,7 +245,20 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 				CAST(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OtherOccupationClass) AS INTEGER),
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.PositionFreeText),
 				Environment.Variables.DBResults.PotentialID
-			);
+			) IN Database.EAPPSQL1;
+			
+			SET Environment.Variables.DBState.SQLAction = 'dbo.eApp_spSaveAppForm_2';
+			SET Environment.Variables.DBState.SQLState1 = SQLSTATE;
+			SET Environment.Variables.DBState.SQLCode1 = SQLCODE;
+			SET Environment.Variables.DBState.SQLErrorText1 = SQLERRORTEXT;
+			SET Environment.Variables.DBState.SQLNativeError1 = SQLNATIVEERROR;
+			
+			IF FIELDVALUE(Environment.Variables.DBResults.PotentialID) < 0 THEN
+				SET OutputRoot.JSON.Data.Response.Result = 'false';
+				SET OutputRoot.JSON.Data.Response.ErrLog = 'Customer not saved successful, twice!';
+				SET Environment.Variables.RouteName = 'RETURN';
+				PROPAGATE TO LABEL 'RETURN';
+			END IF;
 		END IF;
 		
 		SET OutputRoot.JSON.Data.Response.Result = 'true';
@@ -239,54 +282,54 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 	END;
 	
 	CREATE PROCEDURE eApp_spSaveAppForm (
-		IN p1 CHARACTER, 
-		IN p2 INTEGER, 
-		IN p3 CHARACTER,
-		IN p4 CHARACTER,
-		IN p5 CHARACTER,
-		IN p6 CHARACTER,
-		IN p7 CHARACTER,
-		IN p8 INTEGER,
-		IN p9 CHARACTER,
-		IN p10 CHARACTER,
-		IN p11 CHARACTER, 
-		IN p12 CHARACTER, 
-		IN p13 CHARACTER,
-		IN p14 CHARACTER,
-		IN p15 CHARACTER,
-		IN p16 DECIMAL,
-		IN p17 BOOLEAN,
-		IN p18 CHARACTER,
-		IN p19 CHARACTER,
-		IN p20 CHARACTER,
-		IN p21 CHARACTER, 
-		IN p22 CHARACTER, 
-		IN p23 CHARACTER,
-		IN p24 CHARACTER,
-		IN p25 CHARACTER,
-		IN p26 BOOLEAN,
-		IN p27 CHARACTER,
-		IN p28 CHARACTER,
-		IN p29 CHARACTER,
-		IN p30 CHARACTER,
-		IN p31 INTEGER, 
-		IN p32 CHARACTER, 
-		IN p33 CHARACTER,
-		IN p34 DECIMAL,
-		IN p35 BOOLEAN,
-		IN p36 BOOLEAN,
-		IN p37 BOOLEAN,
-		IN p38 CHARACTER,
-		IN p39 CHARACTER,
-		IN p40 CHARACTER,
-		IN p41 INTEGER, 
-		IN p42 INTEGER, 
-		IN p43 INTEGER,
-		IN p44 CHARACTER,
-		IN p45 INTEGER,
-		IN p46 INTEGER,
-		IN p47 CHARACTER,
-		INOUT p48 INTEGER
+		IN Action 					CHARACTER,
+        IN ProposalID 				INTEGER,
+        IN PotentialType 			CHARACTER,
+        IN Relationship 			CHARACTER,
+        IN FullName 				CHARACTER,
+        IN BirthDate 				CHARACTER,
+        IN BirthPlace 				CHARACTER,
+        IN Age 						INTEGER,
+        IN Gender 					CHARACTER,
+        IN IDNum 					CHARACTER,
+        IN Nationality 				CHARACTER,
+        IN Maturity 				CHARACTER,
+        IN Occupation 				CHARACTER,
+        IN OccupationDetail 		CHARACTER,
+        IN OtherOcc 				CHARACTER,
+        IN Income 					DECIMAL,
+        IN IsTaxAmerican 			BOOLEAN,
+        IN CellPhone 				CHARACTER,
+        IN HomePhone 				CHARACTER,
+        IN BusinessPhone 			CHARACTER,
+        IN Email 					CHARACTER,
+        IN Address 					CHARACTER,
+        IN AddressCode 				CHARACTER,
+        IN BusinessAddress 			CHARACTER,
+        IN BusinessAddressCode 		CHARACTER,
+        IN IsCompany 				BOOLEAN,
+        IN BankAccount 				CHARACTER,
+        IN BankBranch 				CHARACTER,
+        IN OtherOccDetail 			CHARACTER,
+        IN TaxID 					CHARACTER,
+        IN IsPOSameLI 				INTEGER,
+        IN ClassSchool 				CHARACTER,
+        IN School 					CHARACTER,
+        IN OtherIncome 				DECIMAL,
+        IN IsPOAddress 				BOOLEAN,
+        IN IsOtherAddress 			BOOLEAN,
+        IN IsSMS 					BOOLEAN,
+        IN ClientIsExist 			CHARACTER,
+        IN OccupationCode 			CHARACTER,
+        IN OtherOccCode 			CHARACTER,
+        IN OccupationClass 			INTEGER,
+        IN PotentialID 				INTEGER,
+        IN IsLIS 					INTEGER,
+        IN PORelationValue 			CHARACTER,
+        IN OccupationClassCurrent 	INTEGER,
+        IN OtherOccupationClass 	INTEGER,
+        IN PositionFreeText 		CHARACTER,
+        OUT OutputID 				INTEGER
 	)
 	LANGUAGE DATABASE
 	EXTERNAL NAME "dbo.eApp_spSaveAppForm";
