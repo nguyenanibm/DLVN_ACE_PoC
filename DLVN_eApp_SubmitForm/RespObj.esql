@@ -9,6 +9,7 @@ CREATE COMPUTE MODULE RespObj
 		SET OutputRoot.JSON = InputRoot.JSON;
 		CALL ResetJSONArray(OutputRoot.JSON);
 		
+		DELETE FIELD OutputRoot.JSON.Data.jsonDataInput;
 		DELETE FIELD Environment;
 		RETURN TRUE;
 	END;

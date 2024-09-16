@@ -77,8 +77,7 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		IF FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.FullName) = '' THEN
 			SET OutputRoot.JSON.Data.Response.Result = 'false';
 			SET OutputRoot.JSON.Data.Response.ErrLog = 'EMPTY';
-			SET Environment.Variables.RouteName = 'RETURN';
-			PROPAGATE TO LABEL 'RETURN';
+			RETURN TRUE;
 		END IF;
 		
 --		CALL getProposalInfo(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.ProposalID));
@@ -89,8 +88,7 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		IF FIELDVALUE(Environment.Variables.DBResults.ProposalInfo[1].Status) = 'Initial' THEN
 			SET OutputRoot.JSON.Data.Response.Result = 'false';
 			SET OutputRoot.JSON.Data.Response.ErrLog = 'EMPTY';
-			SET Environment.Variables.RouteName = 'RETURN';
-			PROPAGATE TO LABEL 'RETURN';
+			RETURN TRUE;
 		END IF;
 		
 --		CALL checkIDNumExists(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.IDNum));
@@ -201,8 +199,7 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		IF FIELDVALUE(Environment.Variables.DBResults.PotentialID) < 0 THEN
 			SET OutputRoot.JSON.Data.Response.Result = 'false';
 			SET OutputRoot.JSON.Data.Response.ErrLog = 'Customer not saved successful';
-			SET Environment.Variables.RouteName = 'RETURN';
-			PROPAGATE TO LABEL 'RETURN';
+			RETURN TRUE;
 		END IF;
 		
 --		CALL getCustomer(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.ProposalID), FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.PotentialID));
@@ -298,13 +295,14 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 			IF FIELDVALUE(Environment.Variables.DBResults.PotentialID) < 0 THEN
 				SET OutputRoot.JSON.Data.Response.Result = 'false';
 				SET OutputRoot.JSON.Data.Response.ErrLog = 'Customer not saved successful, twice!';
-				SET Environment.Variables.RouteName = 'RETURN';
-				PROPAGATE TO LABEL 'RETURN';
+				RETURN TRUE;
 			END IF;
 		END IF;
 		
 		SET OutputRoot.JSON.Data.Response.Result = 'true';
 		SET OutputRoot.JSON.Data.Response.ErrLog = 'Submit Customer is saved successfull.';
+		SET OutputRoot.JSON.Data.Response.NewAPIToken = '';
+		SET OutputRoot.JSON.Data.Response.Message = Environment.Variables.DBResults.PotentialID;
 		
 		RETURN TRUE;
 	END;

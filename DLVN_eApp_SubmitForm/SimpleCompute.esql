@@ -11,16 +11,12 @@ CREATE COMPUTE MODULE SimpleCompute
 		
 		DECLARE url CHAR InputRoot.HTTPInputHeader."X-Original-HTTP-Command";
 		
-		IF(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.Action) = 'SubmitCustomerInfo') THEN
-			SET Environment.Variables.RouteName = 'SubmitCustomerInfo';
-			PROPAGATE TO LABEL 'SubmitCustomerInfo';
-		ELSE
+		IF(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.Action) <> 'SubmitCustomerInfo') THEN
 			DELETE FIELD OutputRoot.JSON;
 			SET OutputRoot.JSON.Data.Response.Result = 'False';
 			SET OutputRoot.JSON.Data.Response.ErrLog = 'Invalid API action';
 			
-			SET Environment.Variables.RouteName = 'NOPE';
-			PROPAGATE TO LABEL 'NOPE';
+			PROPAGATE TO TERMINAL 'Out1';
 		END IF;
 		RETURN TRUE;
 	END;
