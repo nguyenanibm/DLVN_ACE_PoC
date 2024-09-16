@@ -103,6 +103,38 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 		SET Environment.Variables.DBState.SQLCode1 = SQLCODE;
 		SET Environment.Variables.DBState.SQLErrorText1 = SQLERRORTEXT;
 		SET Environment.Variables.DBState.SQLNativeError1 = SQLNATIVEERROR;
+		
+		DECLARE IsTaxAmerican BOOLEAN;
+		DECLARE IsCompany BOOLEAN;
+		DECLARE IsPOAddress BOOLEAN;
+		DECLARE IsOtherAddress BOOLEAN;
+		DECLARE IsSMS BOOLEAN;
+		
+		IF FIELDVALUE(Environment.Variables.DBData.IsTaxAmerican) = '1' THEN
+			SET IsTaxAmerican = TRUE;
+		ELSE
+			SET IsTaxAmerican = FALSE;
+		END IF;
+		IF FIELDVALUE(Environment.Variables.DBData.IsCompany) = '1' THEN
+			SET IsCompany = TRUE;
+		ELSE
+			SET IsCompany = FALSE;
+		END IF;
+		IF FIELDVALUE(Environment.Variables.DBData.IsPOAddress) = '1' THEN
+			SET IsPOAddress = TRUE;
+		ELSE
+			SET IsPOAddress = FALSE;
+		END IF;
+		IF FIELDVALUE(Environment.Variables.DBData.IsOtherAddress) = '1' THEN
+			SET IsOtherAddress = TRUE;
+		ELSE
+			SET IsOtherAddress = FALSE;
+		END IF;
+		IF FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.IsSMS) = '1' THEN
+			SET IsSMS = TRUE;
+		ELSE
+			SET IsSMS = FALSE;
+		END IF;
 
 		CALL eApp_spSaveAppForm(
 			FIELDVALUE(Environment.Variables.DBData.Action),
@@ -121,7 +153,8 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OccupationDetail),
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OtherOcc),
 			CAST(FIELDVALUE(Environment.Variables.DBData.Income) AS DECIMAL),
-			CAST(FIELDVALUE(Environment.Variables.DBData.IsTaxAmerican) AS BOOLEAN),
+--			CAST(FIELDVALUE(Environment.Variables.DBData.IsTaxAmerican) AS BOOLEAN),
+			IsTaxAmerican,
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.CellPhone),
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.HomePhone),
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.BusinessPhone),
@@ -130,7 +163,8 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.AddressCode),
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.BusinessAddress),
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.BusinessAddressCode),
-			CAST(FIELDVALUE(Environment.Variables.DBData.IsCompany) AS BOOLEAN),
+--			CAST(FIELDVALUE(Environment.Variables.DBData.IsCompany) AS BOOLEAN),
+			IsCompany,
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.BankAccount),
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.BankBranch),
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OtherOccDetail),
@@ -139,9 +173,12 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.ClassSchool),
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.School),
 			CAST(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OtherIncome) AS DECIMAL),
-			CAST(FIELDVALUE(Environment.Variables.DBData.IsPOAddress) AS BOOLEAN),
-			CAST(FIELDVALUE(Environment.Variables.DBData.IsOtherAddress) AS BOOLEAN),
-			CAST(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.IsSMS) AS BOOLEAN),
+--			CAST(FIELDVALUE(Environment.Variables.DBData.IsPOAddress) AS BOOLEAN),
+			IsPOAddress,
+--			CAST(FIELDVALUE(Environment.Variables.DBData.IsOtherAddress) AS BOOLEAN),
+			IsOtherAddress,
+--			CAST(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.IsSMS) AS BOOLEAN),
+			IsSMS,
 			FIELDVALUE(Environment.Variables.DBResults.cli_id),
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OccupationCode),
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OtherOccCode),
@@ -153,7 +190,7 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 			CAST(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OtherOccupationClass) AS INTEGER),
 			FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.PositionFreeText),
 			Environment.Variables.DBResults.PotentialID
-		) IN Database.EAPPSQL1;
+		);
 		
 		SET Environment.Variables.DBState.SQLAction = 'dbo.eApp_spSaveAppForm_1';
 		SET Environment.Variables.DBState.SQLState1 = SQLSTATE;
@@ -213,7 +250,8 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OccupationDetail),
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OtherOcc),
 				CAST(FIELDVALUE(Environment.Variables.DBData.Income) AS DECIMAL),
-				CAST(FIELDVALUE(Environment.Variables.DBData.IsTaxAmerican) AS BOOLEAN),
+--				CAST(FIELDVALUE(Environment.Variables.DBData.IsTaxAmerican) AS BOOLEAN),
+				IsTaxAmerican,
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.CellPhone),
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.HomePhone),
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.BusinessPhone),
@@ -222,7 +260,8 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.AddressCode),
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.BusinessAddress),
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.BusinessAddressCode),
-				CAST(FIELDVALUE(Environment.Variables.DBData.IsCompany) AS BOOLEAN),
+--				CAST(FIELDVALUE(Environment.Variables.DBData.IsCompany) AS BOOLEAN),
+				IsCompany,
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.BankAccount),
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.BankBranch),
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OtherOccDetail),
@@ -231,9 +270,12 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.ClassSchool),
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.School),
 				CAST(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OtherIncome) AS DECIMAL),
-				CAST(FIELDVALUE(Environment.Variables.DBData.IsPOAddress) AS BOOLEAN),
-				CAST(FIELDVALUE(Environment.Variables.DBData.IsOtherAddress) AS BOOLEAN),
-				CAST(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.IsSMS) AS BOOLEAN),
+--				CAST(FIELDVALUE(Environment.Variables.DBData.IsPOAddress) AS BOOLEAN),
+				IsPOAddress,
+--				CAST(FIELDVALUE(Environment.Variables.DBData.IsOtherAddress) AS BOOLEAN),
+				IsOtherAddress,
+--				CAST(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.IsSMS) AS BOOLEAN),
+				IsSMS,
 				FIELDVALUE(Environment.Variables.DBResults.CliID),
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OccupationCode),
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OtherOccCode),
@@ -245,7 +287,7 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
 				CAST(FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.OtherOccupationClass) AS INTEGER),
 				FIELDVALUE(Environment.Variables.Request.JSON.Data.jsonDataInput.PositionFreeText),
 				Environment.Variables.DBResults.PotentialID
-			) IN Database.EAPPSQL1;
+			);
 			
 			SET Environment.Variables.DBState.SQLAction = 'dbo.eApp_spSaveAppForm_2';
 			SET Environment.Variables.DBState.SQLState1 = SQLSTATE;
@@ -329,7 +371,7 @@ CREATE COMPUTE MODULE submitCustInfo_Pre_validate
         IN OccupationClassCurrent 	INTEGER,
         IN OtherOccupationClass 	INTEGER,
         IN PositionFreeText 		CHARACTER,
-        OUT OutputID 				INTEGER
+        INOUT OutputID 				INTEGER
 	)
 	LANGUAGE DATABASE
 	EXTERNAL NAME "dbo.eApp_spSaveAppForm";
